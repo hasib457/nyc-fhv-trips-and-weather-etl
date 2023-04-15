@@ -53,8 +53,8 @@ The final stage involves loading the transformed data into the star schema. The 
 ## Running the ETL Pipeline
 To run the ETL pipeline, follow these steps:
 
-Set up the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables.
-Run the etl.py script to execute the pipeline
+    - Set up the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables.
+    - Run the etl.py script to execute the pipeline
 
 ## Other Scenarios
 
