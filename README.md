@@ -35,6 +35,21 @@ The final stage involves loading the transformed data into the star schema. The 
     - location/location_table.parquet
     - weather/weather_table.parquet 
 
+
+   - The main tools used in this project are:
+      - Spark : Apache Spark is used because the dataset is quite large, and processing it on a single machine would be time-consuming and impractical. Spark's distributed architecture allows it to break up the dataset into smaller partitions and process them in parallel across a cluster of machines, making it possible to process large datasets quickly.
+      - AWS EMR: we use Apache Spark on AWS EMR to process large amounts of trip data and extract meaningful insights. EMR provides an easy-to-use interface for launching and managing Spark clusters, and it takes care of the underlying infrastructure setup, including provisioning and configuring the required compute resources.
+
+      - AWS S3: All the data that needs to be processed is first loaded into S3, and then processed using Spark on EMR. The processed data is then stored back in S3. S3 is a cost-effective and scalable solution for storing large amounts of data, making it an ideal choice for building data lakes. Additionally, S3 provides a high level of durability and availability, making it a reliable choice for storing critical data. 
+
+  - The frequency of data updates:
+    - The frequency of data updates depends on the specific use case and business needs. In general, it's important to keep the data as up-to-date as possible to ensure that the insights derived from the data are relevant and accurate.
+    - In this project, I would recommend updating the data on a monthly basis to ensure that the most recent trips are included in the analysis based on that TLC provides data in a monthly manner. 
+
+
+
+
+
 ## Running the ETL Pipeline
 To run the ETL pipeline, follow these steps:
 
@@ -58,6 +73,7 @@ Run the etl.py script to execute the pipeline
     ├── docs                                # Contains files about data model and ETL pipeline.
     ├── hvfhs-data-lake                     # The folder where the processed data is stored.
     ├── data                                # The folder where the raw data is stored.
+    ├── utils                               # Contains files with functions used in the ETL pipeline.
     ├── data_exploration.ipynb              # Jupyter notebook used for data exploration.
     ├── analysis.ipynb                      # Jupyter notebook used for some data analysis.
     ├── dl.cfg                              # The credentials and config used to manage the AWS resources.

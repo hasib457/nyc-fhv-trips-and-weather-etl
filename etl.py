@@ -1,3 +1,4 @@
+# pylint:  disable-all
 """
     This project gather data from two sources: the New York City Taxi and Limousine Commission's (TLC) trip record data 
     and the weather data scraped from https://www.wunderground.com/ 
@@ -92,6 +93,7 @@ from pyspark.sql.functions import (
 )
 from pyspark.sql.types import IntegerType, StringType
 from pyspark.sql.window import Window
+from utils import data_quality
 
 config = configparser.ConfigParser()
 config.read("dl.cfg")
@@ -130,6 +132,12 @@ def process_location_data(spark, input_data, output_data):
     # read location data
     df_loc = spark.read.csv(loc_data, header=True)
 
+    # qulaity check
+    loc_columns = ["location_id", "borough", "zone", "service_zone"]
+    data_quality.contain_target_columns(df_loc, loc_columns, "location")
+
+    data_quality.contain_null(df_loc, loc_columns, "location")
+    data_quality.contain_rows(df_loc, "location")
     # write loaction table to parquet files
     df_loc.write.mode("overwrite").parquet(
         output_data + "location/location_table.parquet"
@@ -154,6 +162,13 @@ def process_hvfhs_data(spark, input_data, output_data):
     hvl_data = input_data + "tlc/hvl_data.csv"
     # read hvfhs data
     df_hvl = spark.read.csv(hvl_data, header=True)
+
+    # data quality
+    hvl_cols = ["hv_license_number", "license_number", "base_name","affiliation" ]
+    data_quality.contain_target_columns(df_hvl, hvl_cols, "hvl")
+
+    data_quality.contain_null(df_hvl, hvl_cols, "hvl")
+    data_quality.contain_rows(df_hvl, "hvl")
 
     df_hvl = df_hvl.select(
         col("hv_license_number"),
@@ -203,10 +218,25 @@ def process_weather_data(spark, input_data, output_data):
     convert_time_udf = udf(lambda time_str: convert_time(time_str), StringType())
     split_udf = udf(lambda x: int(x.split(" ")[0]), IntegerType())
 
+    # read data
+    weather_df = spark.read.csv(weather_data, header=True, inferSchema=True)
+
+    # data quality
+    weather_cols = ["date",
+            "time",
+            "temperature",
+            "humidity",
+            "wind_speed",
+            "condition" ]
+    data_quality.contain_target_columns(weather_df, weather_cols, "weather")
+
+    data_quality.contain_null(weather_df, weather_cols, "weather")
+    data_quality.contain_rows(weather_df, "weather")
+
+
     # Read CSV files and apply transformations
-    weather_df = (
-        spark.read.csv(weather_data, header=True, inferSchema=True)
-        .withColumn("time", convert_time_udf("time"))
+   
+    weather_df =( weather_df.withColumn("time", convert_time_udf("time"))
         .withColumn("date", date_format("date", "yyyy-MM-dd"))
         .withColumn("weather_id", concat_ws(" ", "date", "time"))
         .drop("dew_point", "wind", "wind_gust", "pressure", "precip")
@@ -325,6 +355,30 @@ def process_trip_data(spark, input_data, output_data):
     # read trip data
     df_trip = spark.read.parquet(trip_data)
 
+    trip_cols = ["hvfhs_license_num",
+        "dispatching_base_num",
+        "originating_base_num",
+        "request_datetime",
+        "pickup_datetime",
+        "dropoff_datetime",
+        "PULocationID",
+        "DOLocationID",
+        "trip_miles",
+        "trip_time",
+        "base_passenger_fare",
+        "tolls",
+        "bcf",
+        "sales_tax",
+        "congestion_surcharge",
+        "airport_fee",
+        "tips",
+        "driver_pay",
+        "shared_request_flag",
+        "shared_match_flag"]
+    data_quality.contain_target_columns(df_trip, trip_cols, "trip")
+    data_quality.contain_rows(df_trip, "trip")
+
+
     # extract trip columns
     df_trip = df_trip.select(
         "hvfhs_license_num",
@@ -360,6 +414,8 @@ def process_trip_data(spark, input_data, output_data):
             "yyyy-MM-dd HH",
         ),
     )
+    # check if ather columns contain null valuesspa
+    data_quality.contain_null(df_trip, trip_cols, "trip")
 
     # add trip_id column
     w = Window().orderBy(lit("A"))
@@ -377,7 +433,7 @@ def process_trip_data(spark, input_data, output_data):
 
 def main():
     spark = create_spark_session()
-    input_data = "nyc-fhv-trips-and-weather-etl/data/"
+    input_data = "s3a://nyc-fhv-trips-and-weather-etl/data/"
     output_data = "s3a://nyc-fhv-trips-and-weather-data-lake/"
 
     process_location_data(spark, input_data, output_data)
