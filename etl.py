@@ -2,65 +2,6 @@
 """
     This project gather data from two sources: the New York City Taxi and Limousine Commission's (TLC) trip record data 
     and the weather data scraped from https://www.wunderground.com/ 
-    
-    - With a star schema based on the TLC Trip Record Data  and weather data, you can perform a variety of analytical queries to gain insights into for-hire vehicle industry in New York City. 
-   
-    - Fact Table: Trips
-        trip_id (Primary key)
-        hvfhs_license_num (Foreign key referencing HVFHS)
-        dispatching_base_num (Foreign key referencing base_num)
-        originating_base_num (Foreign key referencing base_num)
-        request_datetime (Foreign key referencing DateTimes)
-        pickup_datetime (Foreign key referencing DateTimes)
-        dropoff_datetime (Foreign key referencing DateTimes)
-        PULocationID (Foreign key referencing Locations)
-        DOLocationID (Foreign key referencing Locations)
-        weather_id
-        trip_miles
-        trip_time
-        base_passenger_fare
-        tolls
-        bcf
-        sales_tax
-        congestion_surcharge
-        airport_fee
-        tips
-        driver_pay
-        shared_request_flag
-        shared_match_flag
-
-    - Dimension Tables:
-        - HVL
-            hv_license_num (Primary key)
-            affiliation
-            base_num (Primary key)
-            base_name
-
-        - DateTimes
-            datetime_id (Primary key)
-            full_datetime
-            date
-            hour
-            day
-            month
-            week
-            day_of_week
-
-        - Locations
-            location_id (Primary key)
-            borough
-            zone
-            service_zone
-        
-        - weather 
-            weather_id	
-            date	
-            time	
-            temperature		
-            humidity	
-            wind_speed			
-            condition
-
 """
 
 import configparser
