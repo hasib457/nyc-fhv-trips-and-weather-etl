@@ -10,33 +10,38 @@ def test_process_location_data():
     spark = create_spark_session()
     input_data = "tests/test_data/"
     output_data = "tests/test_output/"
-    process_location_data(spark, input_data, output_data)
-    # Add assertions to check the output
+    df = process_location_data(spark, input_data, output_data)
+    assert isinstance(df, DataFrame), "Output should be a DataFrame"
+    assert set(df.columns) == {"expected", "columns"}, "Output should have the expected columns"
 
 def test_process_hvfhs_data():
     spark = create_spark_session()
     input_data = "tests/test_data/"
     output_data = "tests/test_output/"
-    process_hvfhs_data(spark, input_data, output_data)
-    # Add assertions to check the output
+    df = process_hvfhs_data(spark, input_data, output_data)
+    assert isinstance(df, DataFrame), "Output should be a DataFrame"
+    assert set(df.columns) == {"expected", "columns"}, "Output should have the expected columns"
 
 def test_process_weather_data():
     spark = create_spark_session()
     input_data = "tests/test_data/"
     output_data = "tests/test_output/"
-    process_weather_data(spark, input_data, output_data)
-    # Add assertions to check the output
+    df = process_weather_data(spark, input_data, output_data)
+    assert isinstance(df, DataFrame), "Output should be a DataFrame"
+    assert set(df.columns) == {"expected", "columns"}, "Output should have the expected columns"
 
 def test_process_datetime_data():
     spark = create_spark_session()
     input_data = "tests/test_data/"
     output_data = "tests/test_output/"
-    process_datetime_data(spark, input_data, output_data)
-    # Add assertions to check the output
+    df = process_datetime_data(spark, input_data, output_data)
+    assert isinstance(df, DataFrame), "Output should be a DataFrame"
+    assert set(df.columns) == {"expected", "columns"}, "Output should have the expected columns"
 
 def test_process_trip_data():
     spark = create_spark_session()
     input_data = "tests/test_data/"
     output_data = "tests/test_output/"
-    process_trip_data(spark, input_data, output_data)
-    # Add assertions to check the output
+    df = process_trip_data(spark, input_data, output_data)
+    assert isinstance(df, DataFrame), "Output should be a DataFrame"
+    assert set(df.columns) == {"expected", "columns"}, "Output should have the expected columns"
