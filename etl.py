@@ -45,7 +45,7 @@ os.environ["AWS_SECRET_ACCESS_KEY"] = config["AWS"]["AWS_SECRET_ACCESS_KEY"]
 
 def create_spark_session():
     """
-    Creates a SparkSession object and returns it.
+    Creates a SparkSession object and returns it. This SparkSession object is used to handle the data processing tasks.
 
     Returns:
         A SparkSession object.
@@ -59,6 +59,7 @@ def create_spark_session():
 def process_location_data(spark, input_data, output_data):
     """
     Processes location data using Spark and writes the resulting Parquet files to S3.
+    This function reads the location data, performs a quality check, and then writes the data to a Parquet file.
 
     Args:
         spark: A SparkSession object.
@@ -373,15 +374,19 @@ def process_trip_data(spark, input_data, output_data):
 
 
 def main():
+    """
+    The main function of the ETL process. It creates a SparkSession, defines the input and output data paths, 
+    and then calls the process functions to perform the ETL tasks.
+    """
     spark = create_spark_session()
     input_data = "s3a://nyc-fhv-trips-and-weather-etl/data/"
     output_data = "s3a://nyc-fhv-trips-and-weather-data-lake/"
 
-    process_location_data(spark, input_data, output_data)
-    process_hvfhs_data(spark, input_data, output_data)
-    process_datetime_data(spark, input_data, output_data)
-    process_trip_data(spark, input_data, output_data)
-    process_weather_data(spark, input_data, output_data)
+    process_location_data(spark, input_data, output_data)  # Process the location data
+    process_hvfhs_data(spark, input_data, output_data)  # Process the hvfhs data
+    process_datetime_data(spark, input_data, output_data)  # Process the datetime data
+    process_trip_data(spark, input_data, output_data)  # Process the trip data
+    process_weather_data(spark, input_data, output_data)  # Process the weather data
 
 
 if __name__ == "__main__":
